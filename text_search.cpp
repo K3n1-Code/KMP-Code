@@ -59,14 +59,4 @@ Matrix computeFailureFunction(const string &str){
 int main(){
     string test = "Marcus";
     Matrix m = computeFailureFunction(test);
-
-    for(int k=0;k<m.width(); k++){
-        cout<<"\n";
-        cout<<(char)k;
-        for(int l=0;l<m.height();l++){
-            
-            cout<<m[k][l];
-            cout<<" ";
-        }
-    }
 }
