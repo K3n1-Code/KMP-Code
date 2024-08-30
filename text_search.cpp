@@ -31,7 +31,7 @@ class Matrix{
 
     int height(){return size[1];}
 
-    vector<int> Matrix::operator[](const int &w){
+    vector<int> operator[](const int &w){
         return matrix[w];
     }
 };
