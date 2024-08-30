@@ -32,25 +32,25 @@ class Matrix{
 
     int height(){return size[1];}
 
-    vector<int> operator[](const int &w){
+    vector<int>& operator[](const int &w){
         return matrix[w];
     }
 };
 
 Matrix computeFailureFunction(const string &str){
-    Matrix func(str.length(),256);
+    Matrix func(256,str.length());
     for(int c=0;c<256;c++){
-        func[0][c]=0;
+        func[c][0]=0;
     }
-    func[0][str[0]]=1;
+    func[(int)str[0]][0]=1;
     int x=0;
 
     for(int k=1;k<str.length()-1;k++){
-        for(int c=0;c<255;c++){
-            func[k][c]=func[x][c];
+        for(int c=0;c<256;c++){
+            func[c][k]=func[c][x];
         }
-        func[k][str[k]]=k+1;
-        x=func[x][str[k]];
+        func[str[k]][k]=k+1;
+        x=func[str[k]][x];
     }
 
     return func;
