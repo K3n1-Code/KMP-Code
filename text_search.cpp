@@ -6,6 +6,13 @@
 
 using namespace std;
 
+bool is_vector_zero(vector<int> a){
+    for(const int &n: a){
+        if(n!=0)return false;
+    }
+    return true;
+}
+
 class Matrix{
     private:
     vector<vector<int>> matrix;
@@ -35,7 +42,44 @@ class Matrix{
     vector<int>& operator[](const int &w){
         return matrix[w];
     }
+    
+    void print(bool not_zero){
+        for(int k=0;k<width(); k++){
+            if(not_zero && is_vector_zero(matrix[k])) continue;
+            cout<<"\n";
+            cout<<(char)k;
+            cout<<" : ";
+            for(int l=0;l<height();l++){
+                cout<<matrix[k][l];
+                cout<<" ";
+            }
+        }
+    }
+
+    void print(){
+        print(true);
+    }
+
 };
+
+
+int KMP(const string &pattern, const string &text, Matrix &f) {
+    int j = 0; // posição atual na palavra pattern
+    int patternLength = pattern.length(); // comprimento do padrão
+    int textLength = text.length(); // comprimento do texto
+
+    for (int i = 0; i < textLength; i++) { 
+
+        // cout<<"jota"<< j<<"\n";
+        // cout <<"length" <<patternLength<<"\n";
+        // i é a posição atual no texto
+        j = f[text[i]][j]; // atualiza a posição no padrão usando a função de falha
+        if (j == patternLength-1) { // se encontrou uma correspondência completa
+            return i - j + 1; // retorna a posição da primeira ocorrência
+        }
+    }
+    return -1; // sem ocorrências
+}
 
 Matrix computeFailureFunction(const string &str){
     Matrix func(256,str.length());
@@ -57,6 +101,8 @@ Matrix computeFailureFunction(const string &str){
 }
 
 int main(){
-    string test = "Marcus";
+    string test = "ABABAABAAACBAACAAACCCAACABB";
     Matrix m = computeFailureFunction(test);
+    m.print();
+    
 }
