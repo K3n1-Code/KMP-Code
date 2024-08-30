@@ -27,6 +27,7 @@ class Matrix{
         size[1]=0;
     }
 
+    public:
     int width(){return size[0];}
 
     int height(){return size[1];}
@@ -36,25 +37,36 @@ class Matrix{
     }
 };
 
-Matrix computeFailureFunction(string str){
-    Matrix func(256,str.length());
+Matrix computeFailureFunction(const string &str){
+    Matrix func(str.length(),256);
     for(int c=0;c<256;c++){
-        func[c][0]=0;
+        func[0][c]=0;
     }
-    func[str[0]][0]=1;
+    func[0][str[0]]=1;
     int x=0;
 
     for(int k=1;k<str.length()-1;k++){
-        for(int c=0;c<256;c++){
-            func[c][k]=func[c][x];
+        for(int c=0;c<255;c++){
+            func[k][c]=func[x][c];
         }
-        func[str[k]][k]=k+1;
-        x=func[str[k]][x];
+        func[k][str[k]]=k+1;
+        x=func[x][str[k]];
     }
 
     return func;
 }
 
 int main(){
-    
+    string test = "Marcus";
+    Matrix m = computeFailureFunction(test);
+
+    for(int k=0;k<m.width(); k++){
+        cout<<"\n";
+        cout<<(char)k;
+        for(int l=0;l<m.height();l++){
+            
+            cout<<m[k][l];
+            cout<<" ";
+        }
+    }
 }
