@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
+#include <fstream>
 
 using namespace std;
 
@@ -48,6 +49,7 @@ class Matrix{
             if(not_zero && is_vector_zero(matrix[k])) continue;
             cout<<"\n";
             cout<<(char)k;
+            cout<<", "+to_string(k);
             cout<<" : ";
             for(int l=0;l<height();l++){
                 cout<<matrix[k][l];
@@ -61,7 +63,6 @@ class Matrix{
     }
 
 };
-
 
 int KMP(const string &pattern, const string &text, Matrix &f) {
     int j = 0; // posição atual na palavra pattern
@@ -100,9 +101,99 @@ Matrix computeFailureFunction(const string &str){
     return func;
 }
 
-int main(){
-    string test = "ABABAABAAACBAACAAACCCAACABB";
-    Matrix m = computeFailureFunction(test);
-    m.print();
+bool is_valid(char X){
+    int x = (int)X;
+    return (x>=65&&x<=90)||(x>96&&x<=122)||(x>=127&&x<=165)||(x>=180&&x<=183)||(x==198||x==199)||(x>=210&&x<=216)||(x>=222&&x<=237);
+}
+
+bool is_valid(string str){
+
+    for(int k=0;k<str.length();k++){
+        if(!is_valid(str[k])) return false;
+    }
+    return true;
+}
+
+string remove_slash(string str){
+    int k;
+    for(k=0;k<str.length();k++){
+        if(str[k]=='/') break;
+    }
+    return str.substr(0,k);
+}
+
+class CorrectedWord{
+    public:
+    string word;
+    int position;
+    int distance;
+    bool correct;
+
+    CorrectedWord();
+
+    CorrectedWord(string w, int p, int d, bool c){
+        word=w;
+        position=p;
+        distance=d;
+        correct=c;
+    }
+
+    void print(){
+        cout<< '['+word+','+to_string(position)+','+to_string(distance)+','+to_string(correct)+"]\n";
+    }
+};
+
+vector<CorrectedWord> correct_word(string word, vector<string> dictionary){
+    int score=-1;
+    vector<int> pos;
     
+    for(int k=0;k<dictionary.size();k++){
+        int sum=word.length()-dictionary[k].length();
+        sum = abs(sum);
+        if(sum>=score && score!=-1) continue;
+    
+        for(int c=0;c<word.length();c++){
+            sum+=tolower(word[c])!=tolower(dictionary[k][c]);
+        }
+        if(sum<score || score==-1) {
+            score= sum;
+            pos.clear();
+        }
+
+        if(sum==score){
+            pos.push_back(k);
+        }
+
+        if(score==0){
+            break;
+        }
+    }
+
+    vector<CorrectedWord> vect;
+    for(int k=0;k<pos.size();k++){
+        vect.push_back(CorrectedWord((string)dictionary[pos[k]],pos[k],score,score==0));
+    }
+    cout<<pos.size();
+    cout<<" ";
+    return vect;
+}
+
+int main(){
+    string test = "Marcos";
+    vector<string> dictionary;
+
+    //reading file for dictionary
+    ifstream fileRead("pt_BR.dic");
+    string line;
+    while(getline(fileRead,line)){
+        if(is_valid(remove_slash(line))){
+            dictionary.push_back(remove_slash(line));
+            //cout<<remove_slash(line)+"\n";
+        }
+    }
+    Matrix m = computeFailureFunction(test);
+    //m.print(false);
+    for(CorrectedWord W :correct_word(test,dictionary)){
+        W.print();
+    };
 }
