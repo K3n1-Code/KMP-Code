@@ -179,7 +179,7 @@ vector<CorrectedWord> correct_word(string word, vector<string> dictionary){
 }
 
 int main(){
-    string test = "Marcos";
+    string test = "alaude";
     vector<string> dictionary;
 
     //reading file for dictionary
