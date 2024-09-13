@@ -34,9 +34,9 @@ string decifra(const string& textoCifrado, const string& chave) {
 
 // Frequência das letras em inglês (aproximada)
 double frequenciasIngles[] = {
-    11.1607, 8.4966, 7.5809, 7.5448, 7.1635, 6.9509, 6.6544, 5.7351, 5.4893, 4.5388,
-    3.6308, 3.3844, 3.1671, 3.0129, 3.0034, 2.4705, 2.0720, 1.8121, 1.7779, 1.2899,
-    1.1016, 1.0074, 0.2902, 0.2722, 0.1965, 0.1962
+    8.2, 1.5, 2.8, 4.3, 12.7, 2.2, 2.0, 6.1, 7.0, 0.15,
+    0.77, 4.0, 2.4, 6.7, 7.5, 1.9, 0.095, 6.0, 6.3, 9.1,
+    2.8, 0.98, 2.4, 0.15, 2.0, 0.074
 };
 
 // Função para calcular a hash de um caractere
@@ -61,7 +61,7 @@ void insertionSort(vector<pair<double, int>>& arr, bool decrescente = true) {
     }
 }
 
-string quebraCifraFrequencia(const string& textoCifrado) {
+string quebraCifraFrequencia(const string& textoCifrado,const string& alfa) {
     int frequenciasCifrado[26] = {0};
     int totalLetras = 0;
 
@@ -74,10 +74,10 @@ string quebraCifraFrequencia(const string& textoCifrado) {
     }
 
     // Calcular as frequências relativas
-    double frequenciasRelativasCifrado[26];
+    /*double frequenciasRelativasCifrado[26];
     for (int i = 0; i < 26; i++) {
         frequenciasRelativasCifrado[i] = (double)frequenciasCifrado[i] / totalLetras * 100;
-    }
+    }*/
 
     // Criar arrays de mapeamento manual
     char mapeamento[26]; // Para mapear de 'a' a 'z'
@@ -86,18 +86,33 @@ string quebraCifraFrequencia(const string& textoCifrado) {
 
     // Preencher vetores de pares (frequência, letra)
     for (int i = 0; i < 26; i++) {
-        sortedFrequenciesCifrado.push_back({frequenciasRelativasCifrado[i], i});
+        sortedFrequenciesCifrado.push_back({frequenciasCifrado[i], i});
         sortedFrequenciesIngles.push_back({frequenciasIngles[i], i});
     }
 
     // Ordenar as frequências em ordem decrescente
     insertionSort(sortedFrequenciesCifrado, true);
+    for(pair<double, int> a: sortedFrequenciesCifrado){
+        cout<<to_string(0)+","+(char)('a'+a.second)+"; ";
+    }
     insertionSort(sortedFrequenciesIngles, true);
+    cout<<"\n\n";
+    for(pair<double, int> a: sortedFrequenciesIngles){
+        cout<<to_string(0)+","+(char)('a'+a.second)+"; ";
+    }
+    
+    cout<<"\n\n";
 
     // Preencher o array de mapeamento manual
     for (int i = 0; i < 26; i++) {
-        mapeamento[sortedFrequenciesCifrado[i].second] = 'a' + sortedFrequenciesIngles[i].second; // Mapear manualmente com base na frequência
+        mapeamento[sortedFrequenciesCifrado[i].second] = 'a' + sortedFrequenciesIngles[i].second; // Mapear manualmente com base na frequência   
     }
+
+    /*for(char a : mapeamento){
+        cout<<a;
+    }*/
+
+    cout<<cifra(alfa,mapeamento);
 
     // Decifrar o texto usando o mapeamento manual
     string textoDecifrado = "";
@@ -117,7 +132,9 @@ int main() {
     string alfabeto = "abcdefghijklmnopqrstuvwxyz";
     random_shuffle(alfabeto.begin(), alfabeto.end());
 
+    cout << "Alfabeto      : " << "abcdefghijklmnopqrstuvwxyz" << "\n";
     cout << "Chave original: " << alfabeto << "\n";
+    
 
     string nomeArquivo = "big.txt";
     ifstream arquivo(nomeArquivo);
@@ -137,10 +154,10 @@ int main() {
     arquivo.close();
 
     textoCifrado = cifra(textoACifrar, alfabeto);
-    cout << "Texto cifrado: " << textoCifrado << endl;
+    //scout << "Texto cifrado: " << textoCifrado << endl;
 
-    string textoOriginalDecifrado = quebraCifraFrequencia(textoCifrado);
-    cout << "Texto decodificado pela análise de frequência: " << textoOriginalDecifrado << endl;
+    string textoOriginalDecifrado = quebraCifraFrequencia(textoCifrado,alfabeto);
+    //cout << "Texto decodificado pela análise de frequência: " << textoOriginalDecifrado << endl;
 
     return 0;
 }
