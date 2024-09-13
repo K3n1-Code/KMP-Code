@@ -20,18 +20,6 @@ string cifra(const string& texto, const string& chave) {
     return textoCifrado;
 }
 
-string decifra(const string& textoCifrado, const string& chave) {
-    string textoOriginal = textoCifrado;
-    for (size_t i = 0; i < textoOriginal.size(); i++) {
-        if (isalpha(textoOriginal[i])) {
-            char letra = tolower(textoOriginal[i]);
-            int posicao = find(chave.begin(), chave.end(), letra) - chave.begin();
-            textoOriginal[i] = 'a' + posicao;
-        }
-    }
-    return textoOriginal;
-}
-
 // Frequência das letras em inglês (aproximada)
 double frequenciasIngles[] = {
     8.2, 1.5, 2.8, 4.3, 12.7, 2.2, 2.0, 6.1, 7.0, 0.15,
@@ -61,7 +49,7 @@ void insertionSort(vector<pair<double, int>>& arr, bool decrescente = true) {
     }
 }
 
-string quebraCifraFrequencia(const string& textoCifrado,const string& alfa) {
+string quebraCifraFrequencia(const string& textoCifrado, const vector<int> &freq) {
     int frequenciasCifrado[26] = {0};
     int totalLetras = 0;
 
@@ -73,12 +61,6 @@ string quebraCifraFrequencia(const string& textoCifrado,const string& alfa) {
         }
     }
 
-    // Calcular as frequências relativas
-    /*double frequenciasRelativasCifrado[26];
-    for (int i = 0; i < 26; i++) {
-        frequenciasRelativasCifrado[i] = (double)frequenciasCifrado[i] / totalLetras * 100;
-    }*/
-
     // Criar arrays de mapeamento manual
     char mapeamento[26]; // Para mapear de 'a' a 'z'
     vector<pair<double, int>> sortedFrequenciesCifrado;
@@ -87,44 +69,37 @@ string quebraCifraFrequencia(const string& textoCifrado,const string& alfa) {
     // Preencher vetores de pares (frequência, letra)
     for (int i = 0; i < 26; i++) {
         sortedFrequenciesCifrado.push_back({frequenciasCifrado[i], i});
-        sortedFrequenciesIngles.push_back({frequenciasIngles[i], i});
+        sortedFrequenciesIngles.push_back({freq[i], i});
     }
 
     // Ordenar as frequências em ordem decrescente
     insertionSort(sortedFrequenciesCifrado, true);
-    for(pair<double, int> a: sortedFrequenciesCifrado){
-        cout<<to_string(0)+","+(char)('a'+a.second)+"; ";
-    }
     insertionSort(sortedFrequenciesIngles, true);
-    cout<<"\n\n";
-    for(pair<double, int> a: sortedFrequenciesIngles){
-        cout<<to_string(0)+","+(char)('a'+a.second)+"; ";
-    }
-    
-    cout<<"\n\n";
 
     // Preencher o array de mapeamento manual
     for (int i = 0; i < 26; i++) {
         mapeamento[sortedFrequenciesCifrado[i].second] = 'a' + sortedFrequenciesIngles[i].second; // Mapear manualmente com base na frequência   
     }
 
-    /*for(char a : mapeamento){
-        cout<<a;
-    }*/
+    return mapeamento;
+}
 
-    cout<<cifra(alfa,mapeamento);
+string quebraCifraFrequencia(const string& textoCifrado){
+    vector<int> vect;
+    for(int i :frequenciasIngles){
+        vect.push_back(i);
+    }
+    return quebraCifraFrequencia(textoCifrado,vect);
+}
 
-    // Decifrar o texto usando o mapeamento manual
-    string textoDecifrado = "";
-    for (char c : textoCifrado) {
+vector<int> get_letter_frequency(const string &text){
+    vector<int> freq(26);
+    for (char c : text) {
         if (isalpha(c)) {
-            textoDecifrado += mapeamento[hashChar(c)];
-        } else {
-            textoDecifrado += c;
+            freq[hashChar(c)]++;
         }
     }
-
-    return textoDecifrado;
+    return freq;
 }
 
 int main() {
@@ -136,7 +111,7 @@ int main() {
     cout << "Chave original: " << alfabeto << "\n";
     
 
-    string nomeArquivo = "big.txt";
+    string nomeArquivo = "alice_in_wonderland.txt";
     ifstream arquivo(nomeArquivo);
 
     if (!arquivo.is_open()) {
@@ -156,8 +131,9 @@ int main() {
     textoCifrado = cifra(textoACifrar, alfabeto);
     //scout << "Texto cifrado: " << textoCifrado << endl;
 
-    string textoOriginalDecifrado = quebraCifraFrequencia(textoCifrado,alfabeto);
-    //cout << "Texto decodificado pela análise de frequência: " << textoOriginalDecifrado << endl;
+    string antiChave = quebraCifraFrequencia(textoCifrado,get_letter_frequency(textoACifrar));
+    string textoOriginalDecifrado = cifra(textoCifrado,antiChave);
+    cout << "Texto decodificado pela analise de frequencia: " << textoOriginalDecifrado << endl;
 
     return 0;
 }
