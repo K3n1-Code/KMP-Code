@@ -44,14 +44,14 @@ int hashChar(char c) {
     return tolower(c) - 'a';
 }
 
-void insertionSort(vector<pair<double, int>> arr)
-{
+void insertionSort(vector<pair<double, int>>& arr, bool decrescente = true) {
     for (int i = 1; i < arr.size(); ++i) {
         double key = arr[i].first;
         int cha = arr[i].second;
         int j = i - 1;
 
-        while (j >= 0 && arr[j].first > key) {
+        // Alterado para ordenação decrescente
+        while (j >= 0 && ((decrescente && arr[j].first < key) || (!decrescente && arr[j].first > key))) {
             arr[j + 1].first = arr[j].first;
             arr[j + 1].second = arr[j].second;
             j = j - 1;
@@ -81,18 +81,22 @@ string quebraCifraFrequencia(const string& textoCifrado) {
 
     // Criar arrays de mapeamento manual
     char mapeamento[26]; // Para mapear de 'a' a 'z'
-    vector<pair<double, int>> sortedFrequencies;
+    vector<pair<double, int>> sortedFrequenciesCifrado;
+    vector<pair<double, int>> sortedFrequenciesIngles;
 
+    // Preencher vetores de pares (frequência, letra)
     for (int i = 0; i < 26; i++) {
-        sortedFrequencies.push_back({frequenciasRelativasCifrado[i], i});
+        sortedFrequenciesCifrado.push_back({frequenciasRelativasCifrado[i], i});
+        sortedFrequenciesIngles.push_back({frequenciasIngles[i], i});
     }
 
-    insertionSort(sortedFrequencies);
-    //sort(sortedFrequencies.rbegin(), sortedFrequencies.rend()); // Ordenar em ordem decrescente
+    // Ordenar as frequências em ordem decrescente
+    insertionSort(sortedFrequenciesCifrado, true);
+    insertionSort(sortedFrequenciesIngles, true);
 
     // Preencher o array de mapeamento manual
     for (int i = 0; i < 26; i++) {
-        mapeamento[sortedFrequencies[i].second] = 'a' + i; // Mapear manualmente com base na frequência
+        mapeamento[sortedFrequenciesCifrado[i].second] = 'a' + sortedFrequenciesIngles[i].second; // Mapear manualmente com base na frequência
     }
 
     // Decifrar o texto usando o mapeamento manual
@@ -113,10 +117,9 @@ int main() {
     string alfabeto = "abcdefghijklmnopqrstuvwxyz";
     random_shuffle(alfabeto.begin(), alfabeto.end());
 
-    cout << "chave original: " << alfabeto << "\n";
+    cout << "Chave original: " << alfabeto << "\n";
 
-
-    string nomeArquivo = "alice_in_wonderland.txt";
+    string nomeArquivo = "big.txt";
     ifstream arquivo(nomeArquivo);
 
     if (!arquivo.is_open()) {
@@ -126,24 +129,19 @@ int main() {
 
     string textoCifrado;
     string textoACifrar;
-    string textoOriginal;
     string linha;
     while (getline(arquivo, linha)) {
         textoACifrar += linha;
     }
 
     arquivo.close();
-    //cout << "Texto Original: " << textoACifrar <<"\n"<< endl;
 
     textoCifrado = cifra(textoACifrar, alfabeto);
+    cout << "Texto cifrado: " << textoCifrado << endl;
 
-    //cout << "Texto cifrado: " << textoCifrado <<"\n"<< endl;
-
-    textoOriginal = quebraCifraFrequencia(textoCifrado);
-    cout << "Texto Original decodificado: " << textoOriginal << "\n" << endl;
-
-    string textoDescriptografado = decifra(textoCifrado, alfabeto);
-    cout << "Texto Descriptografado: " << textoDescriptografado << endl; 
+    string textoOriginalDecifrado = quebraCifraFrequencia(textoCifrado);
+    cout << "Texto decodificado pela análise de frequência: " << textoOriginalDecifrado << endl;
 
     return 0;
 }
+
