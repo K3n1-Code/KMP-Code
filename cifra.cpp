@@ -62,7 +62,7 @@ string quebraCifraFrequencia(const string& textoCifrado, const vector<int> &freq
     }
 
     // Criar arrays de mapeamento manual
-    char mapeamento[26]; // Para mapear de 'a' a 'z'
+    string mapeamento="abcdefghijklmnopqrstuvwxyz"; // Para mapear de 'a' a 'z'
     vector<pair<double, int>> sortedFrequenciesCifrado;
     vector<pair<double, int>> sortedFrequenciesIngles;
 
@@ -76,11 +76,12 @@ string quebraCifraFrequencia(const string& textoCifrado, const vector<int> &freq
     insertionSort(sortedFrequenciesCifrado, true);
     insertionSort(sortedFrequenciesIngles, true);
 
+    
     // Preencher o array de mapeamento manual
     for (int i = 0; i < 26; i++) {
         mapeamento[sortedFrequenciesCifrado[i].second] = 'a' + sortedFrequenciesIngles[i].second; // Mapear manualmente com base na frequência   
     }
-
+    
     return mapeamento;
 }
 
@@ -129,12 +130,13 @@ int main() {
     arquivo.close();
 
     textoCifrado = cifra(textoACifrar, alfabeto);
-    //scout << "Texto cifrado: " << textoCifrado << endl;
+    //cout << "Texto cifrado: " << textoCifrado << endl;
 
-    string antiChave = quebraCifraFrequencia(textoCifrado,get_letter_frequency(textoACifrar));
+    string antiChave = quebraCifraFrequencia(textoCifrado);
     string textoOriginalDecifrado = cifra(textoCifrado,antiChave);
     cout << "Texto decodificado pela analise de frequencia: " << textoOriginalDecifrado << endl;
-
+    cout << antiChave;
+     
     return 0;
 }
 
