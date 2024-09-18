@@ -22,10 +22,16 @@ string cifra(const string& texto, const string& chave) {
 
 // Frequência das letras em inglês (aproximada)
 double frequenciasIngles[] = {
-    8.2, 1.5, 2.8, 4.3, 12.7, 2.2, 2.0, 6.1, 7.0, 0.15,
-    0.77, 4.0, 2.4, 6.7, 7.5, 1.9, 0.095, 6.0, 6.3, 9.1,
-    2.8, 0.98, 2.4, 0.15, 2.0, 0.074
+    8.167, 1.492, 2.782, 4.253, 12.702, 2.228, 2.015, 6.094, 6.966, 0.253,
+    1.772, 4.025, 2.406, 6.749, 7.507, 1.929, 0.095, 5.987, 6.327, 	9.056,
+    2.758, 0.978, 2.360, 0.250, 1.974, 0.074
 };
+
+// double frequenciasIngles[] = {
+//     8.2, 1.5, 2.8, 4.3, 12.7, 2.2, 2.0, 6.1, 7.0, 0.15,
+//     0.77, 4.0, 2.4, 6.7, 7.5, 1.9, 0.095, 6.0, 6.3, 9.1,
+//     2.8, 0.98, 2.4, 0.15, 2.0, 0.074
+// };
 
 // Função para calcular a hash de um caractere
 int hashChar(char c) {
@@ -134,8 +140,10 @@ int main() {
 
     string antiChave = quebraCifraFrequencia(textoCifrado);
     string textoOriginalDecifrado = cifra(textoCifrado,antiChave);
+    string chavegerada = cifra(alfabeto, antiChave);
+    cout <<"chave gerada: "<< chavegerada<< endl;
     cout << "Texto decodificado pela analise de frequencia: " << textoOriginalDecifrado << endl;
-    cout << antiChave;
+   
      
     return 0;
 }
