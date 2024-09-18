@@ -75,7 +75,7 @@ int KMP(const string &pattern, const string &text, Matrix &f) {
         // cout <<"length" <<patternLength<<"\n";
         // i é a posição atual no texto
         j = f[text[i]][j]; // atualiza a posição no padrão usando a função de falha
-        if (j == patternLength-1) { // se encontrou uma correspondência completa
+        if (j == patternLength) { // se encontrou uma correspondência completa
             return i - j + 1; // retorna a posição da primeira ocorrência
         }
     }
@@ -90,7 +90,7 @@ Matrix computeFailureFunction(const string &str){
     func[(int)str[0]][0]=1;
     int x=0;
 
-    for(int k=1;k<str.length()-1;k++){
+    for(int k=1;k<str.length();k++){
         for(int c=0;c<256;c++){
             func[c][k]=func[c][x];
         }
@@ -192,8 +192,8 @@ int main(){
         }
     }
     Matrix m = computeFailureFunction(test);
-    //m.print(false);
-    for(CorrectedWord W :correct_word(test,dictionary)){
+    m.print();
+    /*for(CorrectedWord W :correct_word(test,dictionary)){
         W.print();
-    };
+    };*/
 }
